@@ -7,6 +7,8 @@ import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.tree.*;
 import wang.magick.rendercrashfix.Handlers.ClassHandler;
 
+import java.util.ArrayList;
+
 /**
  * Created by xjboss on 2017/7/11.
  */
@@ -21,12 +23,51 @@ public class IRHandler extends ClassHandler {
         int i=0;
         for (MethodNode mv:cn.methods){
             String method=FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(cn.name,mv.name,mv.desc);
-            LabelNode ln=new LabelNode();
             if(method.equals("func_82406_b")){
-                mv.instructions.add(ln);
+                LabelNode ln1=new LabelNode();
+                mv.instructions.add(ln1);
                 mv.instructions.add(new InsnNode(RETURN));
                 mv.instructions.add(new LabelNode());
-                mv.tryCatchBlocks.get(0).handler=ln;
+                mv.tryCatchBlocks.get(0).handler=ln1;
+            }
+            else if(method.equals("func_94148_a")){
+                LabelNode ln1=new LabelNode();
+                LabelNode ln2=new LabelNode();
+                LabelNode lastnode=(LabelNode) mv.instructions.getLast();
+                ArrayList<LocalVariableNode> nodes=new ArrayList();
+                for(LocalVariableNode lvn:mv.localVariables){
+                    if(lvn.end==lastnode){
+                        nodes.add(lvn);
+                    }
+                }
+                LabelNode endnode=null;
+                for(int in=mv.instructions.size()-1;in>=0;in--){
+                    AbstractInsnNode node=mv.instructions.get(in);
+                    if(node instanceof LabelNode){
+                        if(node!=lastnode){
+                            endnode=(LabelNode) node;
+                            break;
+                        }
+                    }
+                    mv.instructions.get(in);
+                }
+                int inde=mv.localVariables.size();
+                LocalVariableNode v=new LocalVariableNode("e","Ljava/lang/Exception;",null,ln1,ln2,inde);
+                mv.instructions.remove(lastnode);
+                lastnode=new LabelNode();
+                mv.instructions.add(ln1);
+                mv.instructions.add(new LineNumberNode(1,ln1));
+                mv.instructions.add(new FrameNode(F_SAME1, 0, null, 0, new Object[]{"java/lang/Exception"}));
+                mv.instructions.add(new IntInsnNode(ASTORE,inde));
+                mv.instructions.add(ln2);
+                mv.instructions.add(new LineNumberNode(2,ln2));
+                mv.instructions.add(new InsnNode(RETURN));
+                mv.instructions.add(lastnode);
+                mv.localVariables.add(0,v);
+                mv.tryCatchBlocks.add(0,new TryCatchBlockNode((LabelNode) mv.instructions.get(0),endnode,ln1,"java/lang/Exception"));
+                for(LocalVariableNode lvn:nodes){
+                    lvn.end=lastnode;
+                }
             }
         }
         ClassWriter cw=new ClassWriter(0);

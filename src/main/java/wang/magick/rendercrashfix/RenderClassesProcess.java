@@ -54,4 +54,11 @@ public class RenderClassesProcess implements IClassTransformer {
             e.printStackTrace();
             return pFuckedClass;}
     }
+    public void testOutput(byte[] pData,String pName){
+        try {
+            FileOutputStream F = new FileOutputStream(new File(pName));
+            F.write(pData);
+            F.close();
+        }catch (Exception e){}
+    }
 }
