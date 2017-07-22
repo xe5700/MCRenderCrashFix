@@ -1,5 +1,6 @@
 package wang.magick.rendercrashfix;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import wang.magick.rendercrashfix.Handlers.BHHandler;
@@ -30,7 +31,6 @@ public class RenderClassesProcess implements IClassTransformer {
     @Override
     public byte[] transform(String pName, String pTransformedName, byte[] pBasicClass) {
         if(pTransformedName.equals("net.minecraft.client.renderer.entity.RenderManager")){
-
             byte[] b= handler(RMHandler.class,pBasicClass);
             return b;
 

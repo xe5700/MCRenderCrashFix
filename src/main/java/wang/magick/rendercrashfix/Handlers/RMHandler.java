@@ -29,15 +29,17 @@ public class RMHandler extends ClassHandler {
             MethodVisitor mv= super.visitMethod(access, name, desc, signature, exceptions);
             String method=FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(this.name,name,desc);
             if(method.equals("func_147939_a")){
-                mv=new TB(mv);
+                TB tb=new TB(access,name,desc,signature,exceptions);
+                tb.accept(mv);
             }
             return mv;
         }
     }
-    public class TB extends MethodVisitor {
-        public TB(MethodVisitor mv) {
-            super(ASM5,mv);
+    public class TB extends MethodNode {
+        public TB(int access, String name, String desc, String signature, String[] exceptions) {
+            super(ASM5, access, name, desc, signature, exceptions);
         }
+
         int i = 0;
         boolean sss=false;
         @Override
