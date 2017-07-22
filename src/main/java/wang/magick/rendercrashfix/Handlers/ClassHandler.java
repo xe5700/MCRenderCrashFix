@@ -10,5 +10,5 @@ import org.objectweb.asm.commons.GeneratorAdapter;
  * Created by xjboss on 2017/7/11.
  */
 public abstract class ClassHandler implements Opcodes {
-    abstract public byte[] handler(byte[] pClass);
+    public abstract byte[] handler(byte[] pClass);
 }

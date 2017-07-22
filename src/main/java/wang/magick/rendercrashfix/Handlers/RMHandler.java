@@ -9,7 +9,7 @@ import org.objectweb.asm.tree.*;
  * Created by xjboss on 2017/7/11.
  */
 public class RMHandler extends ClassHandler {
-    ClassNode cn=new MC();
+    private ClassNode cn=new MC();
     @Override
     public byte[] handler(byte[] pClass) {
         ClassReader cr=new ClassReader(pClass);
